@@ -1,6 +1,6 @@
 # Serverless-To-Do-App
 
-A fully serverless task management system hosted entirely on AWS. This project demonstrates a clean serverless backend using AWS Lambda, API Gateway, and DynamoDB, along with a modern frontend hosted on S3 and CloudFront.
+A fully serverless task management system hosted entirely on AWS. This project demonstrates a clean serverless backend using AWS Lambda, API Gateway, and DynamoDB, along with a frontend hosted on S3.
 
 ---
 
@@ -50,43 +50,51 @@ A fully serverless task management system hosted entirely on AWS. This project d
 
 ### 1️⃣ Backend Deployment
 
-- implement a lambda policy and role to access Cloudwatch and DynamoDB
-
+1. **IAM Role & Policy**  
+   - Create `LambdaDynamoRole` with permissions for DynamoDB and CloudWatch.
 ![img](https://github.com/Tasneemsherif/Serverless-To-Do-App/blob/main/demo/LambdaPolicy.png)
 
 ![img](https://github.com/Tasneemsherif/Serverless-To-Do-App/blob/main/demo/LambdaRole.png)
    
-- Deploy 4 Lambda functions Create, Read, Update, Delete (CRUD) tasks
+2. **Lambda Functions**  
+   - Deploy `CreateItem`, `ListItems`, `GetItem`, `UpdateItem`, `DeleteItem`
+   - Set environment variable `TABLE_NAME=TodoTable`.  
 
-
-- Create API Gateway REST API
+3. **API Gateway**  
+   - Create `TodoAPI` REST API.  
+   - Resources: `/items` and `/items/{id}`.  
+   - Methods: GET, POST on `/items`; GET, PUT, DELETE on `/items/{id}`.  
+   - Enable **Lambda Proxy integration**, configure CORS, and attach a Resource Policy.
 ![img](https://github.com/Tasneemsherif/Serverless-To-Do-App/blob/main/demo/APIGateway.png)
 
-- Connect Lambda integrations to API Gateway
 ![img](https://github.com/Tasneemsherif/Serverless-To-Do-App/blob/main/demo/APIGatewayIntegration.png)
 
-- Configure Resource Policy and CORS
 
 ### 2️⃣ DynamoDB Table
 
-- Create table: `Tasks`
-- Partition Key: `id` (String)
+- **DynamoDB** table `TodoTable` with partition key `id` (String).  
+- On-demand billing mode.
 
 ![img](https://github.com/Tasneemsherif/Serverless-To-Do-App/blob/main/demo/DynamoDB.png)
 
 ### 3️⃣ Frontend Deployment
 
-- Create S3 bucket for static website hosting, add a bucket policy
-![img](https://github.com/Tasneemsherif/Serverless-To-Do-App/blob/main/demo/S3Buckets.png)
-
-![img](https://github.com/Tasneemsherif/Serverless-To-Do-App/blob/main/demo/S3BucketPolicy.png)
+1. **S3 Bucket**  
+   - Enable static website hosting.
 
 ![img](https://github.com/Tasneemsherif/Serverless-To-Do-App/blob/main/demo/S3Hosting.png)
 
-- Upload content from `frontend/` folder
-![img](github.com/Tasneemsherif/Serverless-To-Do-App/blob/main/demo/S3Buckets.png)
+   - Apply public-read.
+  
+2. **Upload**  
+   - Copy `index.html` and `app.js` from `s3-frontend/`.
 
-- Enable public read access
+![img](https://github.com/Tasneemsherif/Serverless-To-Do-App/blob/main/demo/S3Buckets.png)
+
+3. **CORS**  
+   - JSON configuration to allow frontend origin.
+
+![img](https://github.com/Tasneemsherif/Serverless-To-Do-App/blob/main/demo/S3BucketPolicy.png)
 
 ### 4️⃣ Testing
 
@@ -117,13 +125,19 @@ A fully serverless task management system hosted entirely on AWS. This project d
 
 ### ✅ Frontend Demo
 
-*Modern and responsive UI demo*
-
-![UI Demo](https://github.com/Tasneemsherif/Serverless-To-Do-App/blob/main/demo/Serverless-TodoApp.mp4)
+🎥 [Watch Demo Video](https://drive.google.com/file/d/1P-ZRl-xN6LoAmLI3j7nogrdYpuSWsUTY/view?usp=sharing)
 
 
 ### ✅ CloudWatch 
 
 ![img](https://github.com/Tasneemsherif/Serverless-To-Do-App/blob/main/demo/cloudwatch.png)
+
+---
+
+## 🔮 Future Improvements
+
+- **Authentication** with AWS Cognito  
+- **Infrastructure as Code** (Terraform / AWS SAM)  
+- **CI/CD** via AWS CodePipeline
 
 ---
