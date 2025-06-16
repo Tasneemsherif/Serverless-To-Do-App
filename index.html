@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full bg-gray-50">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Tasneem To‑Do App</title>
+
+  <!-- Tailwind CSS via CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Heroicons -->
+  <script src="https://unpkg.com/heroicons@2.0.13/dist/heroicons.min.js"></script>
+</head>
+<body class="h-full flex flex-col">
+  <!-- Header -->
+  <header class="bg-white shadow p-4 flex flex-wrap justify-between items-center gap-4">
+    <h1 class="text-2xl font-semibold text-indigo-600">Tasneem To‑Do Dashboard</h1>
+    <div class="flex items-center gap-2 flex-wrap">
+      <button id="open-modal" class="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 flex items-center gap-2">
+        <svg class="h-5 w-5" fill="currentColor"><use href="#icon-plus-circle" /></svg>
+        New Task
+      </button>
+      <!-- Filter controls -->
+      <div class="flex items-center gap-2">
+        <label for="filter-select" class="text-gray-700">Show:</label>
+        <select id="filter-select" class="border border-gray-300 rounded-lg px-2 py-1 focus:outline-none focus:ring-2 focus:ring-indigo-400">
+          <option value="all">All</option>
+          <option value="pending">Pending</option>
+          <option value="done">Done</option>
+        </select>
+      </div>
+      <!-- Search -->
+      <div class="relative">
+        <input id="search-input" type="text" placeholder="Search tasks..." class="border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-400"/>
+        <svg class="h-5 w-5 absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-4.35-4.35m0 0A7.5 7.5 0 1116.65 16.65z" />
+        </svg>
+      </div>
+    </div>
+  </header>
+
+  <!-- Notifications / Toast container -->
+  <div id="toast-container" class="fixed top-4 right-4 space-y-2 z-50"></div>
+
+  <!-- Main content -->
+  <main class="flex-1 overflow-auto p-6">
+    <!-- Loader -->
+    <div id="loader" class="flex justify-center items-center py-10 hidden">
+      <svg class="animate-spin h-8 w-8 text-indigo-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z"></path>
+      </svg>
+    </div>
+    <!-- Error / retry state -->
+    <div id="error-state" class="hidden text-center text-red-600 space-y-2">
+      <p>Failed to load tasks. Please check your connection or API settings.</p>
+      <button id="retry-btn" class="text-white bg-red-500 hover:bg-red-600 px-4 py-2 rounded-lg">Retry</button>
+    </div>
+    <!-- Empty / tasks list -->
+    <ul id="todos" class="grid gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3"></ul>
+  </main>
+
+  <!-- Modal backdrop -->
+  <div id="modal-backdrop" class="fixed inset-0 bg-black bg-opacity-50 hidden"></div>
+
+  <!-- Modal -->
+  <div id="modal" class="fixed inset-0 flex items-center justify-center hidden">
+    <div class="bg-white rounded-2xl shadow-xl w-11/12 max-w-md p-6 space-y-4">
+      <h2 class="text-xl font-semibold text-gray-800">Add New Task</h2>
+      <form id="todo-form" class="space-y-4">
+        <div>
+          <label class="block text-gray-700 mb-1">Title</label>
+          <input id="title" class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-400" placeholder="Task title" required />
+        </div>
+        <div>
+          <label class="block text-gray-700 mb-1">Due Date</label>
+          <input id="dueDate" type="date" class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-400" />
+        </div>
+        <div class="flex justify-end gap-2">
+          <button type="button" id="cancel-btn" class="px-4 py-2 rounded-lg border border-gray-300 hover:bg-gray-100">Cancel</button>
+          <button type="submit" id="add-btn" class="px-4 py-2 rounded-lg bg-indigo-600 text-white hover:bg-indigo-700 flex items-center gap-2">
+            <svg class="h-5 w-5" fill="currentColor"><use href="#icon-check-circle" /></svg>
+            Add
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Heroicons SVG sprites -->
+  <svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
+    <symbol id="icon-plus-circle" viewBox="0 0 24 24">
+      <path d="M12 5v14m7-7H5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+    </symbol>
+    <symbol id="icon-check-circle" viewBox="0 0 24 24">
+      <path d="M9 12l2 2 4-4m5 2a9 9 0 11-18 0 9 9 0 0118 0z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+    </symbol>
+    <symbol id="icon-undo" viewBox="0 0 24 24">
+      <path d="M3 10a9 9 0 0115.78-5.28L12 11m-9 1v-2h9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+    </symbol>
+    <symbol id="icon-trash" viewBox="0 0 24 24">
+      <path d="M6 7h12M10 11v6m4-6v6M5 7l1 12a2 2 0 002 2h8a2 2 0 002-2l1-12M9 7V4h6v3" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+    </symbol>
+  </svg>
+
+  <script src="app.js?v=2"></script>
+</body>
+</html>
+
